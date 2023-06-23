@@ -26,15 +26,14 @@ class Channel:
         self.url = "https://www.youtube.com/channel/" + channel_id  # ссылка на канал
 
 
-    def printj(dict_to_print: dict) -> None:
-        """Выводит словарь в json-подобном удобном формате с отступами"""
-        print(json.dumps(dict_to_print, indent=2, ensure_ascii=False))
-
     def my_channel_id(self):
+        
         # print(self.channel_id)
         return self.channel_id
 
-    def print_info(self):
+    def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
-        channel = self.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        return channel
+        self.channel = self.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
+        self.info = json.dumps(self.channel, indent=2, ensure_ascii=False)
+        print(self.info['items'][0]['snippet'])
+
