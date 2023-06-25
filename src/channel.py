@@ -36,8 +36,10 @@ class Channel:
         self.channel = self.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
         self.chan = self.channel
         self.info = json.dumps(self.channel, indent=2, ensure_ascii=False)
-        print(self.channel['items'][0]['snippet'])
-
+        # print(self.channel['items'][0]['snippet'])
+        print(f"Название канала: {self.title}, Описание канала {self.description}, ссылка на канал: "
+              f"{self.url}, количество подписчиков {self.subscriber_count}, id канала: {self.channel_id}, "
+              f"количество видео: {self.video_count}, общее количество просмотров: {self.viewCount}")
 
 
 
