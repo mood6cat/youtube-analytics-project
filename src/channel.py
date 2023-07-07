@@ -16,8 +16,8 @@ class Channel:
 
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
-        self.channel_id = channel_id  #id канала
-        self.channel = self.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
+        self._channel_id = channel_id  #id канала
+        self.channel = self.youtube.channels().list(id=self._channel_id, part='snippet,statistics').execute()
         self.subscriber_count = self.channel['items'][0]['statistics']['subscriberCount']  # количество подписчиков
         self.video_count = self.channel['items'][0]['statistics']['videoCount']  # количество видео
         self.viewCount = self.channel['items'][0]['statistics']['viewCount']  # общее количество просмотров
@@ -25,21 +25,44 @@ class Channel:
         self.description: str = self.channel['items'][0]['snippet']['description']  # Описание канала
         self.url = "https://www.youtube.com/channel/" + channel_id  # ссылка на канал
 
-
-    def my_channel_id(self):
+    @property
+    def channel_id(self):
         
         # print(self.channel_id)
-        return self.channel_id
+        return self._channel_id
+
+    @channel_id.setter
+    def channel_id(self, value):
+        self._channel_id = value
 
     def print_info(self):
         """Выводит в консоль информацию о канале."""
-        self.channel = self.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
+        self.channel = self.youtube.channels().list(id=self._channel_id, part='snippet,statistics').execute()
         self.chan = self.channel
         self.info = json.dumps(self.channel, indent=2, ensure_ascii=False)
         # print(self.channel['items'][0]['snippet'])
         print(f"Название канала: {self.title}, Описание канала {self.description}, ссылка на канал: "
-              f"{self.url}, количество подписчиков {self.subscriber_count}, id канала: {self.channel_id}, "
+              f"{self.url}, количество подписчиков {self.subscriber_count}, id канала: {self._channel_id}, "
               f"количество видео: {self.video_count}, общее количество просмотров: {self.viewCount}")
 
+    
+    def to_json(self, filename):
+        """Метод `to_json()`, сохраняющий в файл значения атрибутов экземпляра Channel"""
+
+        data = {'channel_id': self._channel_id,
+                'channel': self.channel,
+                'title': self.title,
+                'description': self.description,
+                'url': self.url,
+                'subscriberCount': self.subscriber_count,
+                'video_count': self.video_count,
+                'viewCount': self.viewCount
+                }
+        with open(filename, 'w') as f:
+            json.dump(data, f,)
 
 
+    @classmethod
+    def get_service(cls):
+        """Класс-метод `get_service()`, возвращающий объект для работы с YouTube API"""
+        return cls.youtube
