@@ -27,14 +27,12 @@ class Channel:
 
     @property
     def channel_id(self):
-        
         # print(self.channel_id)
         return self._channel_id
 
-    @channel_id.setter
-    def channel_id(self, value):
-        self._channel_id = value
-
+    # @channel_id.setter
+    # def channel_id(self, value):
+    #     self._channel_id = value
     def print_info(self):
         """Выводит в консоль информацию о канале."""
         self.channel = self.youtube.channels().list(id=self._channel_id, part='snippet,statistics').execute()
