@@ -6,9 +6,9 @@ from googleapiclient.discovery import build
 
 import isodate
 
-
 # api_key: str = os.getenv('YT_API_KEY')  Это не работало
-api_key: str = 'AIzaSyAT2fssSmUegKbhed6Yt9hkBfV0IKVnELo'   # то что сгенерировал API гугла. А это работает
+api_key: str = 'AIzaSyAT2fssSmUegKbhed6Yt9hkBfV0IKVnELo'  # то что сгенерировал API гугла. А это работает
+
 
 class Channel:
     """Класс для ютуб-канала"""
@@ -16,14 +16,35 @@ class Channel:
 
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
-        self._channel_id = channel_id  #id канала
+        self._channel_id = channel_id  # id канала
         self.channel = self.youtube.channels().list(id=self._channel_id, part='snippet,statistics').execute()
-        self.subscriber_count = self.channel['items'][0]['statistics']['subscriberCount']  # количество подписчиков
+        self.subscriber_count: int = self.channel['items'][0]['statistics']['subscriberCount']  # количество подписчиков
         self.video_count = self.channel['items'][0]['statistics']['videoCount']  # количество видео
         self.viewCount = self.channel['items'][0]['statistics']['viewCount']  # общее количество просмотров
-        self.title: str = self.channel['items'][0]['snippet']['title']   # Название канала
+        self.title: str = self.channel['items'][0]['snippet']['title']  # Название канала
         self.description: str = self.channel['items'][0]['snippet']['description']  # Описание канала
         self.url = "https://www.youtube.com/channel/" + channel_id  # ссылка на канал
+
+    def __str__(self):
+        return f"{self.title} ({self.url})"
+
+    def __add__(self, other):
+        return int(self.subscriber_count) + int(other.subscriber_count)
+
+    def __sub__(self, other):
+        return int(self.subscriber_count) - int(other.subscriber_count)
+
+    def __gt__(self, other):
+        return self.subscriber_count > other.subscriber_count
+
+    def __ge__(self, other):
+        return self.subscriber_count >= other.subscriber_count
+
+    def __lt__(self, other):
+        return self.subscriber_count < other.subscriber_count
+
+    def __le__(self, other):
+        return self.subscriber_count <= other.subscriber_count
 
     @property
     def channel_id(self):
@@ -43,7 +64,6 @@ class Channel:
               f"{self.url}, количество подписчиков {self.subscriber_count}, id канала: {self._channel_id}, "
               f"количество видео: {self.video_count}, общее количество просмотров: {self.viewCount}")
 
-    
     def to_json(self, filename):
         """Метод `to_json()`, сохраняющий в файл значения атрибутов экземпляра Channel"""
 
@@ -57,8 +77,7 @@ class Channel:
                 'viewCount': self.viewCount
                 }
         with open(filename, 'w') as f:
-            json.dump(data, f,)
-
+            json.dump(data, f, )
 
     @classmethod
     def get_service(cls):
