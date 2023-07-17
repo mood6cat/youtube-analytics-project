@@ -1,10 +1,7 @@
 import json
-import os
 
 # необходимо установить через: pip install google-api-python-client
 from googleapiclient.discovery import build
-
-import isodate
 
 # api_key: str = os.getenv('YT_API_KEY')  Это не работало
 api_key: str = 'AIzaSyAT2fssSmUegKbhed6Yt9hkBfV0IKVnELo'  # то что сгенерировал API гугла. А это работает
